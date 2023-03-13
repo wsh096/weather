@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WeatherApplicationTests {
 
    @Test
-   @DisplayName("동일테스트")
+   @DisplayName("Equalstest")
 
    void equalTest(){
        //given
