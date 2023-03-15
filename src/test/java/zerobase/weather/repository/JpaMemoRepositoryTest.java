@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-@Transactional //test에 쓰면 커밋을 안 함.
+@Transactional
 class JpaMemoRepositoryTest {
 @Autowired
     JpaMemoRepository jpaMemoRepository;
@@ -35,10 +35,9 @@ void insertMemoTest(){
 
 void findByIdTest(){
     //given
-    Memo newMemo = new Memo(11,"jpa");//autoincrease로 둬서 안 나온 것
+    Memo newMemo = new Memo(11,"jpa");
     //when
     Memo memo = jpaMemoRepository.save(newMemo);
-    //System.out.println(memo.getId());
     //then
     Optional<Memo> result = jpaMemoRepository.findById(memo.getId());
     assertEquals(result.get().getText(),"jpa");

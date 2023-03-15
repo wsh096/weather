@@ -11,33 +11,31 @@ import zerobase.weather.service.DiaryService;
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController//Client와 맞닿아 있는 곳. //Restful 한 응답을 줌
-public class DiaryController { //client - controller - service - repository - db 순
-    //@GetMapping 조회 목적 //PostMapping 저장 목적
-    //@DateTimeFormat springboot에서 제공해주는 datetime임을 지정해 주는 format
-    private final DiaryService diaryService;//controller에서 service로 주기 위함
+@RestController
+public class DiaryController {
+    private final DiaryService diaryService;
 
-    public DiaryController(DiaryService diaryService) {//생성자를 이용해서 가져오는 방식.
+    public DiaryController(DiaryService diaryService) {
         this.diaryService = diaryService;
     }
 
-    @ApiOperation(value = "일기 텍스트와 날씨를 이용해서 DB에 일기 저장", notes = "이것은 노트")
-//swagger에 나오는 설명
+    @ApiOperation(value = "일기 텍스트와 날씨를 이용해서 DB에 일기 저장")
     @PostMapping("/create/diary")
-//path지정
-        //(iso = DateTimeFormat.ISO.DATE) 받을 값 포맷을 지정해 줍니다. 이렇게 하겠다는 약속을 구하기
+
     void createDiary(
+            @ApiParam(value = "일기를 작성할 날짜를 입력해 주세요.", example = "2023-03-01")
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestBody String text) {//요청을 넣어줄 때 들어갈 파라미터 /!@##$!$QW이런 거 말하는 것
-        //body 안에 들어갈 텍스트 일기 내용.
+            @ApiParam(value = "일기를 작성해 주세요.", example = "오늘은 내 인생 최고의 날이다.")
+            @RequestBody String text) {
         diaryService.createDiary(date, text);
     }
 
-    //조회하는 역할! get!
+
     @ApiOperation(value = "선택한 날짜의 모든 일기 데이터를 가져옵니다.")
     @GetMapping("/read/diary")
     List<Diary> readDiary(
+            @ApiParam(value = "조회할 기간의 날짜입니다.", example = "2023-03-01")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date) {
 //
@@ -48,28 +46,33 @@ public class DiaryController { //client - controller - service - repository - db
     @GetMapping("/read/diaries")
     List<Diary> readDiaries(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @ApiParam(value = "조회할 기간의 첫 번째 날입니다.", example = "2020-02-01")
+            @ApiParam(value = "조회할 기간의 첫 번째 날입니다.", example = "2023-03-01")
             LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @ApiParam(value = "조회할 기간의 마지막 날입니다.", example = "2020-02-02")
+            @ApiParam(value = "조회할 기간의 마지막 날입니다.", example = "2023-03-15")
             LocalDate endDate
     ) {
         return diaryService.readDiaries(startDate, endDate);
     }
 
-    //수정에는 put
+    @ApiOperation(value = "해당 날짜의 첫번째 일기 글을 새로 받아온 일기글로 수정합니다.")
     @PutMapping("/update/diary")
     void updateDiary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate date, @RequestBody String text) {
+            @ApiParam(value = "수정할 날짜입니다.", example = "2023-03-01")
+            LocalDate date,
+            @RequestBody
+            @ApiParam(value = "수정할 내용을 작성해 주세요.", example = "오늘 내가 한 건...")
+            String text) {
         diaryService.updateDiary(date, text);
     }
-
+    @ApiOperation(value = "해당 날짜의 모든 일기를 삭제합니다.")
     @DeleteMapping("/delete/diary")
     void deleteDiary(
+            @ApiParam(value = "입력한 날짜의 모든 일기를 삭제합니다.", example = "2023-03-01")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date
     ) {
-        diaryService.deleteDiary(date);//이것도 과제네. 전부 다 지워버리네...
+        diaryService.deleteDiary(date);
     }
 }

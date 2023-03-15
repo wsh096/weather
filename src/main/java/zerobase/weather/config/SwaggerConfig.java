@@ -25,7 +25,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("날씨 일기 프로젝트")
                 .description("날씨 일기를 CRUD 할 수 있는 백엔드 API입니다.")
-                .version("2.0")
+                .version("1.2")
                 .build();
     }
 }

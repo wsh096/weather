@@ -48,24 +48,16 @@ public class DiaryService {
 
 
     @Transactional
-    @Scheduled(cron = "0 0 1 * * *") //cron 규칙
-    public void saveWeatherDate() {//날씨 저장해줄 함수
+    @Scheduled(cron = "0 0 1 * * *")
+    public void saveWeatherDate() {
         logger.info("오늘도 날씨 데이터를 잘 가져왔습니다.");
         dateWeatherRepository.save(getWeatherFromApi());
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void createDiary(LocalDate date, String text) {//public으로 선언 필요
+    public void createDiary(LocalDate date, String text) {
         logger.info("started to create diary");
-        /**3가지 기능에 대한 정리
-         * open weather map에서 날씨 데이터 가져오기
-         * 받아온 날씨 json 파싱하기
-         * 파싱된 데이터 + 일기 값 우리 db에 넣기
-         */
-        //날씨 데이터 가져오기(API or DB)
         DateWeather dateWeather = getDateWeather(date);
-
-        //파싱된 데이터 + 일기 값 우리 db에 넣기
         Diary nowDiary = new Diary();
         nowDiary.setDateWeather(dateWeather);
         nowDiary.setText(text);
@@ -75,9 +67,9 @@ public class DiaryService {
 
 
     private DateWeather getWeatherFromApi() {
-        //open weather map에서 날씨 데이터 가져오기
+
         String weatherData = getWeatherString();
-        //받아온 날씨 json 파싱하기
+
         Map<String, Object> parsedWeather = parseWeather(weatherData);
         DateWeather dateWeather = new DateWeather();
         dateWeather.setDate(LocalDate.now());
@@ -91,8 +83,7 @@ public class DiaryService {
         List<DateWeather> dateWeatherListFromDB =
                 dateWeatherRepository.findAllByDate(date);
         if (dateWeatherListFromDB.size() == 0) {
-            //새로 api에서 날씨 정보를 가져와야 한다.
-            //정책 상, 현재 날씨를 가져오도록 하거나, 날씨 없이 일기 쓰게 하기.
+
             return getWeatherFromApi();
         } else {
             return dateWeatherListFromDB.get(0);
@@ -102,9 +93,6 @@ public class DiaryService {
     @Transactional(readOnly = true)
     public List<Diary> readDiary(LocalDate date) {
         logger.debug("read diary");
-        //if (date.isAfter(LocalDate.ofYearDay(3050, 1))) {
-            //  throw new InvalidDate();
-        //}
         return diaryRepository.findAllByDate(date);
     }
 
@@ -114,9 +102,9 @@ public class DiaryService {
     }
 
     public void updateDiary(LocalDate date, String text) {
-        Diary nowDiary = diaryRepository.getFirstByDate(date);//이러면 첫 번째거만 수정되긴 함. 이 부분이겠네. 과제
+        Diary nowDiary = diaryRepository.getFirstByDate(date);
         nowDiary.setText(text);
-        diaryRepository.save(nowDiary);//id가 있는 상태로 하면 update기능이 됨!
+        diaryRepository.save(nowDiary);
     }
 
     public void deleteDiary(LocalDate date) {
@@ -131,10 +119,10 @@ public class DiaryService {
         try {
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();//요청을 보낼 수 있는 connection을 열고
-            connection.setRequestMethod("GET");//get요청을 보내고
-            int responseCode = connection.getResponseCode();//응답 코드 수신
+            connection.setRequestMethod("GET");
+            int responseCode = connection.getResponseCode();
             BufferedReader br;
-            if (responseCode == 200) {//응답 또는 에러를 가지고 옴
+            if (responseCode == 200) {
                 br = new BufferedReader(
                         new InputStreamReader(connection.getInputStream()));
             } else {
@@ -144,11 +132,11 @@ public class DiaryService {
             String inputLine;
             StringBuilder response = new StringBuilder();
             while ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);//response라는 stringbuilder에 담아 줌
+                response.append(inputLine);
             }
             br.close();
 
-            return response.toString();//응답값을 답은 stringbuiler를 반환
+            return response.toString();
         } catch (Exception e) {
             return "failed to get response";
         }
