@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-@Transactional
+@Transactional //test에 쓰면 커밋을 안 함.
 class JpaMemoRepositoryTest {
 @Autowired
     JpaMemoRepository jpaMemoRepository;
