@@ -1,5 +1,6 @@
 # weather
 
+## Model
 <pre class="example microlight"><span class="">[</span><span class="token-not-formatted">
   </span><span class="">{</span><span class="token-not-formatted">
     </span><span class="token-string">"date"</span><span class="">:</span><span class="token-not-formatted"> </span><span class="token-string">"2023-03-15"</span><span class="">,</span><span class="token-not-formatted">
